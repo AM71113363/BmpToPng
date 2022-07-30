@@ -18,6 +18,7 @@ You already know how to rebuilt it. ^_^<br>
 <br>
 
 # NOTE
+*The bitmap must be 24-bit and not compressed.<br>
 *It uses libs(png & zlib).<br>
 *I use it to convert BMP file to PNG,then PNG to ICO(I need ICO for my Apps).<br>
 
