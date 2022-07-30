@@ -1,0 +1,33 @@
+# Project: BMPTOPNG
+
+CC   = gcc.exe -s
+WINDRES = windres.exe
+RES  = obj/main.res
+OBJ  = obj/main.o obj/operation.o $(RES)
+LINKOBJ  = obj/main.o obj/operation.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib" -mwindows pnglib.a zlib.a  
+INCS =  -I"C:/Dev-Cpp/include" 
+BIN  = BmpToPng.exe
+CFLAGS = $(INCS)  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before BmpToPng.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "BmpToPng.exe" $(LIBS)
+
+obj/main.o: main.c
+	$(CC) -c main.c -o obj/main.o $(CFLAGS)
+
+obj/operation.o: operation.c
+	$(CC) -c operation.c -o obj/operation.o $(CFLAGS)
+
+obj/main.res: main.rc 
+	$(WINDRES) -i main.rc --input-format=rc -o obj/main.res -O coff 
+

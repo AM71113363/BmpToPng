@@ -1,0 +1,72 @@
+# Project: PNGLIB
+
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = obj/png.o obj/pngerror.o obj/pngget.o obj/pngmem.o obj/pngpread.o obj/pngread.o obj/pngrio.o obj/pngrtran.o obj/pngrutil.o obj/pngset.o obj/pngtest.o obj/pngtrans.o obj/pngwio.o obj/pngwrite.o obj/pngwtran.o obj/pngwutil.o $(RES)
+LINKOBJ  = obj/png.o obj/pngerror.o obj/pngget.o obj/pngmem.o obj/pngpread.o obj/pngread.o obj/pngrio.o obj/pngrtran.o obj/pngrutil.o obj/pngset.o obj/pngtest.o obj/pngtrans.o obj/pngwio.o obj/pngwrite.o obj/pngwtran.o obj/pngwutil.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib" zlib.a  
+INCS =  -I"C:/Dev-Cpp/include" 
+BIN  = pnglib.a
+CFLAGS = $(INCS)  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before pnglib.a all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(LINKOBJ)
+	ar r $(BIN) $(LINKOBJ)
+	ranlib $(BIN)
+
+obj/png.o: pnglib/png.c
+	$(CC) -c pnglib/png.c -o obj/png.o $(CFLAGS)
+
+obj/pngerror.o: pnglib/pngerror.c
+	$(CC) -c pnglib/pngerror.c -o obj/pngerror.o $(CFLAGS)
+
+obj/pngget.o: pnglib/pngget.c
+	$(CC) -c pnglib/pngget.c -o obj/pngget.o $(CFLAGS)
+
+obj/pngmem.o: pnglib/pngmem.c
+	$(CC) -c pnglib/pngmem.c -o obj/pngmem.o $(CFLAGS)
+
+obj/pngpread.o: pnglib/pngpread.c
+	$(CC) -c pnglib/pngpread.c -o obj/pngpread.o $(CFLAGS)
+
+obj/pngread.o: pnglib/pngread.c
+	$(CC) -c pnglib/pngread.c -o obj/pngread.o $(CFLAGS)
+
+obj/pngrio.o: pnglib/pngrio.c
+	$(CC) -c pnglib/pngrio.c -o obj/pngrio.o $(CFLAGS)
+
+obj/pngrtran.o: pnglib/pngrtran.c
+	$(CC) -c pnglib/pngrtran.c -o obj/pngrtran.o $(CFLAGS)
+
+obj/pngrutil.o: pnglib/pngrutil.c
+	$(CC) -c pnglib/pngrutil.c -o obj/pngrutil.o $(CFLAGS)
+
+obj/pngset.o: pnglib/pngset.c
+	$(CC) -c pnglib/pngset.c -o obj/pngset.o $(CFLAGS)
+
+obj/pngtest.o: pnglib/pngtest.c
+	$(CC) -c pnglib/pngtest.c -o obj/pngtest.o $(CFLAGS)
+
+obj/pngtrans.o: pnglib/pngtrans.c
+	$(CC) -c pnglib/pngtrans.c -o obj/pngtrans.o $(CFLAGS)
+
+obj/pngwio.o: pnglib/pngwio.c
+	$(CC) -c pnglib/pngwio.c -o obj/pngwio.o $(CFLAGS)
+
+obj/pngwrite.o: pnglib/pngwrite.c
+	$(CC) -c pnglib/pngwrite.c -o obj/pngwrite.o $(CFLAGS)
+
+obj/pngwtran.o: pnglib/pngwtran.c
+	$(CC) -c pnglib/pngwtran.c -o obj/pngwtran.o $(CFLAGS)
+
+obj/pngwutil.o: pnglib/pngwutil.c
+	$(CC) -c pnglib/pngwutil.c -o obj/pngwutil.o $(CFLAGS)
