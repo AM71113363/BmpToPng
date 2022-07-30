@@ -24,108 +24,102 @@ void SetColor(UCHAR red,UCHAR green,UCHAR blue)
 
 void SavePNG(UCHAR *name)
 {
-	png_structp png_ptr;
-	png_infop info_ptr;
+    png_structp png_ptr;
+    png_infop info_ptr;
+    FILE *fp;
 
-	FILE *fp;
-
-	fp = fopen(name, "wb");
+    fp = fopen(name, "wb");
     if(fp==NULL)
-    return;
-	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, name, NULL, NULL);
-	if(png_ptr == NULL)
+      return;
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, name, NULL, NULL);
+    if(png_ptr == NULL)
     {
        fclose(fp);
        return;
     }        
-	info_ptr = png_create_info_struct(png_ptr);
-	if(info_ptr == NULL)
+    info_ptr = png_create_info_struct(png_ptr);
+    if(info_ptr == NULL)
     {
        fclose(fp);
        return;
     }
 
     png_init_io(png_ptr, fp);
-	png_set_compression_level(png_ptr, 6);
+    png_set_compression_level(png_ptr, 6);
     png_set_compression_mem_level(png_ptr, 9);
-
-	png_set_IHDR(png_ptr, info_ptr, bInfo->biWidth, bInfo->biHeight, 8,2, 0, 0,0);
-
-	png_set_tRNS(png_ptr, info_ptr, NULL, 0, &rgbData);
-	png_write_info(png_ptr, info_ptr);
+    png_set_IHDR(png_ptr, info_ptr, bInfo->biWidth, bInfo->biHeight, 8,2, 0, 0,0);
+    png_set_tRNS(png_ptr, info_ptr, NULL, 0, &rgbData);
+    png_write_info(png_ptr, info_ptr);
     png_set_bgr(png_ptr);
-	png_write_image(png_ptr, rowBytesBuffer);
-	png_write_end(png_ptr, info_ptr);
-	png_destroy_write_struct(&png_ptr, &info_ptr);
+    png_write_image(png_ptr, rowBytesBuffer);
+    png_write_end(png_ptr, info_ptr);
+    png_destroy_write_struct(&png_ptr, &info_ptr);
 
-	fflush(fp);
-	fclose(fp);
-	return;
+    fflush(fp);
+  fclose(fp);
+return;
 }
 
 UCHAR GetInfo()
 {
     UCHAR *bp, **rp; UCHAR Inverted;
-	LONG n; DWORD imageBytes; DWORD imageRowBytes;
+    LONG n; DWORD imageBytes; DWORD imageRowBytes;
   
       
     bFile=(BITMAPFILEHEADER*)buffer;  
-	bInfo = (BITMAPINFOHEADER*)(buffer + sizeof(BITMAPFILEHEADER));
-	DWORD compression;
+    bInfo = (BITMAPINFOHEADER*)(buffer + sizeof(BITMAPFILEHEADER));
+    //DWORD compression;
 
-	if(rowBytesBuffer){ free(rowBytesBuffer); rowBytesBuffer= NULL; }
+    if(rowBytesBuffer){ free(rowBytesBuffer); rowBytesBuffer= NULL; }
     
     if(bFile->bfType != 0x4D42)
-       return NO;	
+      return NO;	
 
-	if (bInfo->biSize !=40)
-     return NO;
+    if(bInfo->biSize !=40)
+      return NO;
 	
-	if(bInfo->biBitCount!=24)
-	   return NO;
+    if(bInfo->biBitCount!=24)
+      return NO;
 	
-	
-	if(bInfo->biCompression != BI_RGB)
+    if(bInfo->biCompression != BI_RGB)
       return NO;
          
-	if (bInfo->biHeight < 0)
+    if (bInfo->biHeight < 0)
     {
-		bInfo->biHeight  = -bInfo->biHeight;
-		Inverted = YES;
-	}else{ Inverted  = NO; }
-	if (bInfo->biWidth  <= 0) return FALSE;
-	if (bInfo->biHeight <= 0) return FALSE;
+        bInfo->biHeight  = -bInfo->biHeight;
+	Inverted = YES;
+    }else{ Inverted  = NO; }
+    if(bInfo->biWidth  <= 0) return NO;
+    if(bInfo->biHeight <= 0) return NO;
 
     imageRowBytes = ((DWORD)bInfo->biWidth * 24 + 31) / 32 * 4;
-	imageBytes = imageRowBytes * bInfo->biHeight;
-	rowBytesBuffer = (UCHAR**)malloc((UINT)bInfo->biHeight * sizeof(UCHAR*));
+    imageBytes = imageRowBytes * bInfo->biHeight;
+    rowBytesBuffer = (UCHAR**)malloc((UINT)bInfo->biHeight * sizeof(UCHAR*));
 
-	if (rowBytesBuffer == NULL){
-		return NO;
-	}
+    if(rowBytesBuffer == NULL)
+      return NO;
+    n  = bInfo->biHeight;
+    rp = rowBytesBuffer;
+    bp = &buffer[bFile->bfOffBits];
 
-	n  = bInfo->biHeight;
-	rp = rowBytesBuffer;
-	bp = &buffer[bFile->bfOffBits];
-
-	if(Inverted==YES)
+    if(Inverted==YES)
     {
-		while(--n>=0)
+        while(--n>=0)
         {
-			*rp++ = bp;
-			 bp+=imageRowBytes;
-		}
+	    *rp++ = bp;
+	    bp+=imageRowBytes;
 	}
+    }
     else
     {
-		bp+=imageBytes;
-		while(--n>=0)
+	bp+=imageBytes;
+	while(--n>=0)
         {
-			bp -= imageRowBytes;
-			*rp++ = bp;
-		}
+	    bp -= imageRowBytes;
+	    *rp++ = bp;
 	}
-	return YES;
+    }
+  return YES;
 }
 
 
