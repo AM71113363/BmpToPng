@@ -133,12 +133,12 @@ UCHAR ReadDataFile(UCHAR *name)
         return NO;
     }
     buffer = (UCHAR*) malloc(bufferLen+1);
-    memset(buffer,0,bufferLen+1);
     if(buffer==NULL)
     { 
         CloseHandle(fd);
         return NO;
     }
+    memset(buffer,0,bufferLen+1);
     if(ReadFile(fd, buffer, bufferLen, &result, NULL) == FALSE)
     {
         CloseHandle(fd);
