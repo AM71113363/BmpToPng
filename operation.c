@@ -55,6 +55,8 @@ void SavePNG(UCHAR *name)
 
     fflush(fp);
   fclose(fp);
+  //free(buffer); 
+  //Well,the app at exit will release his memory,calling free() its not gonna change nothing(I THINK)
 return;
 }
 
