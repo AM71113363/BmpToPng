@@ -5,7 +5,7 @@
 #define YES 1
 #define NO 0
 
-UCHAR *buffer;
+UCHAR *buffer=NULL;
 UINT bufferLen=0;
 
 BITMAPFILEHEADER *bFile;
@@ -18,9 +18,7 @@ void SetColor(UCHAR red,UCHAR green,UCHAR blue)
     rgbData.red=red;
     rgbData.green=green;
     rgbData.blue=blue;
-		
 }
-
 
 void SavePNG(UCHAR *name)
 {
@@ -65,10 +63,8 @@ UCHAR GetInfo()
     UCHAR *bp, **rp; UCHAR Inverted;
     LONG n; DWORD imageBytes; DWORD imageRowBytes;
   
-      
     bFile=(BITMAPFILEHEADER*)buffer;  
     bInfo = (BITMAPINFOHEADER*)(buffer + sizeof(BITMAPFILEHEADER));
-    //DWORD compression;
 
     if(rowBytesBuffer){ free(rowBytesBuffer); rowBytesBuffer= NULL; }
     
@@ -84,13 +80,13 @@ UCHAR GetInfo()
     if(bInfo->biCompression != BI_RGB)
       return NO;
          
-    if (bInfo->biHeight < 0)
+    if(bInfo->biHeight < 0)
     {
         bInfo->biHeight  = -bInfo->biHeight;
 	Inverted = YES;
     }else{ Inverted  = NO; }
-    if(bInfo->biWidth  <= 0) return NO;
-    if(bInfo->biHeight <= 0) return NO;
+    if((bInfo->biWidth  <= 0) || (bInfo->biHeight <= 0)) 
+      return NO;
 
     imageRowBytes = ((DWORD)bInfo->biWidth * 24 + 31) / 32 * 4;
     imageBytes = imageRowBytes * bInfo->biHeight;
@@ -122,26 +118,40 @@ UCHAR GetInfo()
   return YES;
 }
 
-
 UCHAR ReadDataFile(UCHAR *name)
 {
     HANDLE fd;
     DWORD result=0;
+    if(buffer!=NULL){ free(buffer); buffer=NULL;}
     fd = CreateFile(name, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, 0);
     if(fd == INVALID_HANDLE_VALUE)
       return NO;
     bufferLen = GetFileSize(fd,NULL);
     if(bufferLen == 0xFFFFFFFF)
-      return NO;
+    {
+        CloseHandle(fd);
+        return NO;
+    }
     buffer = (UCHAR*) malloc(bufferLen+1);
     memset(buffer,0,bufferLen+1);
     if(buffer==NULL)
-      return NO;
+    { 
+        CloseHandle(fd);
+        return NO;
+    }
     if(ReadFile(fd, buffer, bufferLen, &result, NULL) == FALSE)
-      return NO;
+    {
+        CloseHandle(fd);
+        free(buffer); buffer=NULL;
+        return NO;
+    }
     if(result != bufferLen)
-      return NO;
-      CloseHandle(fd);   
+    {
+        CloseHandle(fd);
+        free(buffer); buffer=NULL;
+        return NO;
+    }
+    CloseHandle(fd);   
   return GetInfo();
 }
 
