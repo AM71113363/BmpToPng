@@ -44,40 +44,32 @@ void SaveDataToFile()
      strcat(DropFile,".png\0");
      if(ret==YES)
       SavePNG(DropFile);
-PostMessage(hWnd,WM_DESTROY,0,0);
-_exit(0);
+  PostMessage(hWnd,WM_DESTROY,0,0);
+  _exit(0);
 }
 
 LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)             
     {
-       	case WM_CONTEXTMENU:
-			{
-                	CreateThread(0,0,(LPTHREAD_START_ROUTINE)SaveDataToFile,0,0,0);
-			
-		}break;           
-   
-        case WM_CREATE:
-        {
-             hWnd = hwnd;
-             hBitmap= CreateWindow("BUTTON", "", WS_CHILD | WS_VISIBLE | BS_BITMAP | BS_NOTIFY,
+       	case WM_CONTEXTMENU:{
+            CreateThread(0,0,(LPTHREAD_START_ROUTINE)SaveDataToFile,0,0,0);
+	}break;           
+        case WM_CREATE:{
+            hWnd = hwnd;
+            hBitmap= CreateWindow("BUTTON", "", WS_CHILD | WS_VISIBLE | BS_BITMAP | BS_NOTIFY,
 				0, 20, 400, 400, hwnd, (HMENU)1234, ins, NULL );    
-           CenterOnScreen(hwnd); 
+            CenterOnScreen(hwnd); 
         }break; 
-    case WM_ERASEBKGND:
-    {
-      hBackBrush = CreateSolidBrush(nColor);
-      FillRect((HDC)wParam, &back, hBackBrush);
-      DeleteObject(hBackBrush);
-    }
-    return 1;
-      case WM_COMMAND:
-      {
-      switch(LOWORD(wParam))
-      {
-           case 1234:
-           {    
+        case WM_ERASEBKGND:{
+            hBackBrush = CreateSolidBrush(nColor);
+            FillRect((HDC)wParam, &back, hBackBrush);
+            DeleteObject(hBackBrush);
+        }
+        return 1;
+        case WM_COMMAND:{ switch(LOWORD(wParam)){
+            case 1234:
+            {    
                 HDC hScreenDC = GetDC(hwnd);
                 GetCursorPos(&cursor);
                 ScreenToClient(hwnd, &cursor);
@@ -86,27 +78,24 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
                 SendMessage(hWnd, WM_ERASEBKGND, (WPARAM)GetDC(hWnd), 0);
                 SetColor(GetRValue(nColor),GetGValue(nColor),GetBValue(nColor));
                 SetForegroundWindow(hwnd);
-           }
-           break;
-      }//switch
-      }//WM_COMMAND
-      break;   
-      case WM_DROPFILES: 
-      {
-		     memset(DropFile,0,MAX_PATH);; 
-		     DragQueryFile((HDROP)wParam, 0, DropFile, MAX_PATH);
-		     DragFinish((HDROP) wParam);
-		     CreateThread(0,0,(LPTHREAD_START_ROUTINE)ReadDataFromFile,0,0,0);
-      }
-      break; 
+            } break;
+          }//switch
+        }//WM_COMMAND
+        break;   
+        case WM_DROPFILES:{
+            SetWindowText(hwnd,"Bmp To Png");
+            memset(DropFile,0,MAX_PATH);; 
+	    DragQueryFile((HDROP)wParam, 0, DropFile, MAX_PATH);
+	    DragFinish((HDROP) wParam);
+	    CreateThread(0,0,(LPTHREAD_START_ROUTINE)ReadDataFromFile,0,0,0);
+        } break; 
         case WM_DESTROY:
-            PostQuitMessage (0);       /* send a WM_QUIT to the message queue */
+            PostQuitMessage (0);       
             break;
-        default:                      /* for messages that we don't deal with */
+        default: 
             return DefWindowProc (hwnd, message, wParam, lParam);
     }
-
-    return 0;
+  return 0;
 }
 
 
