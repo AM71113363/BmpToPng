@@ -32,11 +32,11 @@ return;
 
 void ReadDataFromFile()
 {
-
-HBITMAP hp = LoadImage(ins, DropFile,IMAGE_BITMAP,0, 0,LR_DEFAULTCOLOR | LR_LOADFROMFILE);
-			SendMessage(hBitmap, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP,(LPARAM)(HANDLE) hp);
-ret=ReadDataFile(DropFile);
-if(ret==NO) SetWindowText(hWnd,"Error: Drop a BMP(24Bit) File For Windows");
+    HBITMAP hp = LoadImage(ins, DropFile,IMAGE_BITMAP,0, 0,LR_DEFAULTCOLOR | LR_LOADFROMFILE);
+    SendMessage(hBitmap, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP,(LPARAM)(HANDLE) hp);
+    ret=ReadDataFile(DropFile);
+    if(ret==NO) 
+      SetWindowText(hWnd,"Error: Drop a BMP(24Bit) File For Windows");
 }
 
 void SaveDataToFile()
@@ -97,8 +97,6 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
     }
   return 0;
 }
-
-
 
 int WINAPI WinMain (HINSTANCE _A_, HINSTANCE _B_, LPSTR _C_,  int _D_)
 {
